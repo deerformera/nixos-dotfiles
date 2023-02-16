@@ -36,32 +36,9 @@
 		device = "nodev";
 		useOSProber = true;
   };
-  # boot.initrd.kernelModules = [ "amdgpu" ];
-  boot.kernelParams = [ 
-    "radeon.si_support=0" 
-    "amdgpu.si_support=1" 
-    "radeon.cik_support=0" 
-    "amdgpu.cik_support=1" 
-  ];
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
-  hardware.opengl.driSupport = true;
-  hardware.opengl.driSupport32Bit = true;
-
-
-  fileSystems."/hdisk" = {
-    device = "/dev/disk/by-label/HardDisk";
-    fsType = "ext4";
-  };
-
-  users.users.deerformera = {
-    isNormalUser = true;
-    home = "/home/deerformera";
-    extraGroups = ["wheel"];
-    shell = pkgs.zsh;
-  };
-
-  security.sudo.wheelNeedsPassword = false;
+  # security.sudo.wheelNeedsPassword = false;
 
   networking.hostName = "nixue";
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -70,21 +47,18 @@
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
   time.timeZone = "Asia/Jakarta";
-
-  # i18n.defaultLocale = "en_US.UTF-8";
-
   services.xserver = {
     enable = true;
     displayManager.gdm.enable = true;
-    desktopManager.gnome.enable = true;
+    # desktopManager.gnome.enable = true;
     desktopManager.xfce.enable = true;
     # videoDrivers = [ "amdgpu" ];
   };
 
-  services.httpd = {
-    enable = true;
-    enablePHP = true;
-  };
+  # services.httpd = {
+  #   enable = true;
+  #   enablePHP = true;
+  # };
 
   # Configure keymap in X11
   services.xserver.layout = "us";
