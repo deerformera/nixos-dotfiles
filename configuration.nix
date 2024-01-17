@@ -11,14 +11,17 @@
     ];
 
   nixpkgs.config.allowUnfree = true;
-
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  security.pam.services.rin.enableKwallet = true;
 
   boot.loader = {
     grub = {
       enable = true;
       efiSupport = true;
       device = "nodev";
-    };
+      useOSProber = true;
+    }; 
+    # systemd-boot.enable = true;
     efi = {
       canTouchEfiVariables = true;
       efiSysMountPoint = "/boot/efi";
@@ -26,7 +29,8 @@
   };
 
   networking.hostName = "nixue";
-  networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
+  networking.networkmanager.enable = true;
+  networking.firewall.allowedTCPPorts = [ 80 443];
 
   time.timeZone = "Asia/Jakarta";
 
@@ -36,18 +40,23 @@
     enable = true;
     layout = "us";
     displayManager.sddm.enable = true;
+    displayManager.autoLogin.enable = true;
+    displayManager.autoLogin.user = "rin";
     desktopManager.plasma5.enable = true;
-    # videoDrivers = [ "amdgpu" ];
   };
 
   # Enable sound.
-  # sound.enable = true;
-  # hardware.pulseaudio.enable = true;
+  sound.enable = true;
+  hardware.pulseaudio.enable = true;
 
   users.users.rin = {
     isNormalUser = true;
     extraGroups = [ "wheel" ];
   };
+
+  fonts.packages = with pkgs; [
+    fira-code
+  ];
 
   environment.systemPackages = with pkgs; [
     # sys
@@ -56,22 +65,44 @@
     pfetch
     wget
     git
-    pciutils
+    aircrack-ng
+    crunch
+    wirelesstools
+    openssl
+    osslsigncode
 
     # apps
-    inkscape
     gimp
+    inkscape
     steam-run
     blender
-    steam
     firefox
+    gh
+    yt-dlp
+    vlc
+    obs-studio
+    kdenlive
+    audacity
+    latte-dock
+    vscode.fhs
+    google-chrome
+    wineWowPackages.stable
   ];
+
+  programs.steam.enable = true;
+  services.httpd = {
+    enable = true;
+    adminAddr = "webmaster@example.org";
+    virtualHosts."localhost" = {
+      documentRoot = "/srv/www";
+    };
+  };
 
   environment.shellAliases = {
     nixos-switch = "sudo nixos-rebuild switch";
-    nixos-config = "sudo nvim /etc/nixos/configuration.nix";
+    nixos-cf = "sudo nvim /etc/nixos/configuration.nix";
   };
 
-  system.stateVersion = "23.05"; # Did you read the comment?
+  system.stateVersion = "23.11"; # Did you read the comment?
 }
 
